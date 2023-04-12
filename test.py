@@ -1,4 +1,4 @@
-import utils.fock as fk
+import kinematics as fk
 import numpy as np
 from  mujoco_py import load_model_from_path, MjSim, MjViewer
 import time
@@ -12,7 +12,6 @@ model_path = "/mnt/nfs_code/robopen_users/jaydv/utils/robohive/robohive/envs/fm/
 model = load_model_from_path(model_path)
 sim = MjSim(model)
 viewer = MjViewer(sim)
-# eef_cmd = np.array([ 0.5738, -0.1328,  0.9802, 0.0888 ,-0.9924,  0.0776,  0.0363])
 eef_cmd = np.array([ 0.554,  0.2239, 0.9512, 0.0951, -0.9613, -0.2552 , 0.0417 ])
 eef_pos = eef_cmd[:3]
 eef_quat = eef_cmd[3:7]
@@ -21,7 +20,6 @@ np.set_printoptions(suppress=True)
 ik_result = fk.get_ik_action(model_path=model_path,eef_pos=eef_pos, eef_quat=eef_quat)
 print(ik_result)
 action = ik_result.qpos[:sim.model.nu-1]
-#action = 2*(((action - pos_limits['jnt_low'])/(pos_limits['jnt_high']-pos_limits['jnt_low']))-0.75)
 print(action)
 sim.data.qpos[:7] = action
 sim.forward()
