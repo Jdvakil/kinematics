@@ -13,10 +13,12 @@ pos_limits = {'eef_low': np.array([ 0.368 , -0.25  ,  0.9   , -3.1416,  0.    , 
 @click.command(help="")
 @click.option("-m", '--model_path', required=True, type=str, help="Init the sim")
 @click.option('-rp', '--rollout_path', required=True, type=str,help="rollout path for the h5")
-def main(model_path, rollout_path):
+@click.option('-r', '--render', type=bool, default=False)
+def main(model_path, rollout_path, render):
     model = load_model_from_path(model_path)
     sim = MjSim(model)
-    viewer = MjViewer(sim)
+    if render:
+        viewer = MjViewer(sim)
     qpos = None
     h5 = h5py.File(rollout_path, "r") 
     hor = h5[list(h5.keys())[0]]['data']['time'].shape[0]
@@ -37,8 +39,9 @@ def main(model_path, rollout_path):
                 action = ik_result.qpos[:sim.model.nu-1]
                 sim.data.qpos[:7] = action
                 sim.forward()
-                viewer.render()
-                time.sleep(0.05)
+                if render:
+                    viewer.render()
+                time.sleep(0.1)
 
 if __name__ == '__main__':
     main()
